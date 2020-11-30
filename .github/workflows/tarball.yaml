@@ -1,0 +1,71 @@
+name: "Tarball"
+
+on:
+  push:
+    branches:
+      - "main"
+
+  workflow_dispatch:
+
+env:
+  PROTON_GE_RELEASE: "5.21-GE-1"
+
+jobs:
+  build:
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Install required system packages"
+        run: "sudo apt-fast install -y autoconf patch"
+
+      - name: "Checkout Proton GE Custom"
+        uses: "actions/checkout@v2.3.4"
+        with:
+          repository: "GloriousEggroll/proton-ge-custom"
+          ref: "${{ env.PROTON_GE_RELEASE }}"
+          submodules: "recursive"
+
+      - name: "Apply patches"
+        run: "./patches/protonprep-nofshack.sh"
+
+      - name: "Cleanup"
+        run: "find . -xtype f -iname *.orig -delete"
+
+      - name: "Create .tar.xz"
+        run: "tar --exclude='.git' -cJvf ~/proton-ge-custom-src.tar.xz * .*"
+
+      - name: "Create SHA256SUMS file"
+        run: |
+          cd ~/
+          sha256sum -b * > SHA256SUMS
+
+      - name: "Create release"
+        id: "create_release"
+        uses: "actions/create-release@v1.1.4"
+        env:
+          GITHUB_TOKEN: "${{ secrets.LCTRS_BOT_TOKEN }}"
+        with:
+          draft: false
+          prerelease: false
+          release_name: "${{ env.PROTON_GE_RELEASE }}"
+          tag_name: "${{ env.PROTON_GE_RELEASE }}"
+
+      - name: "Upload Tarball to release"
+        uses: "actions/upload-release-asset@v1.0.2"
+        env:
+          GITHUB_TOKEN: "${{ secrets.LCTRS_BOT_TOKEN }}"
+        with:
+          upload_url: "${{ steps.create_release.outputs.upload_url }}"
+          asset_path: "~/proton-ge-custom-src.tar.xz"
+          asset_name: "proton-ge-custom-src.tar.xz"
+          asset_content_type: "application/x-xz"
+
+      - name: "Upload SHA256SUMS file to release"
+        uses: "actions/upload-release-asset@v1.0.2"
+        env:
+          GITHUB_TOKEN: "${{ secrets.LCTRS_BOT_TOKEN }}"
+        with:
+          upload_url: "${{ steps.create_release.outputs.upload_url }}"
+          asset_path: "~/SHA256SUMS"
+          asset_name: "SHA256SUMS"
+          asset_content_type: "text/plain"
