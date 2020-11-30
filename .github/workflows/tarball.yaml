@@ -38,7 +38,7 @@ jobs:
       - name: "Create SHA256SUMS file"
         run: |
           cd ~/
-          sha256sum -b * > SHA256SUMS
+          sha256sum -b proton-ge-custom-src.tar.xz > SHA256SUMS
 
       - name: "Create release"
         id: "create_release"
