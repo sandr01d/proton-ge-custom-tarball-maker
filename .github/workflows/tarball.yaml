@@ -24,6 +24,7 @@ jobs:
           repository: "GloriousEggroll/proton-ge-custom"
           ref: "${{ env.PROTON_GE_RELEASE }}"
           submodules: "recursive"
+          fetch-depth: 0
 
       - name: "Apply patches"
         run: "./patches/protonprep-nofshack.sh"
