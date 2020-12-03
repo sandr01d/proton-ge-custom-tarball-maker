@@ -60,6 +60,14 @@ jobs:
       - name: "Create SHA256SUMS file"
         run: "sha256sum -b proton-ge-custom-src.tar.xz > SHA256SUMS"
 
+      - name: "Delete existing release"
+        uses: "dev-drprasad/delete-tag-and-release@v0.1.2"
+        env:
+          GITHUB_TOKEN: "${{ secrets.LCTRS_BOT_TOKEN }}"
+        with:
+          delete_release: true
+          tag_name: "${{ env.PROTON_GE_RELEASE }}"
+
       - name: "Create release"
         uses: "softprops/action-gh-release@v1"
         env:
