@@ -12,11 +12,20 @@ env:
 
 jobs:
   build:
-    runs-on: "ubuntu-latest"
+    runs-on: "ubuntu-20.04"
 
     steps:
-      - name: "Install required system packages"
-        run: "sudo apt-fast install -y autoconf patch"
+      - name: "Install required system packages using apt-fast"
+        run: >-
+          DEBIAN_FRONTEND=noninteractive apt-fast install --no-install-recommends -y 
+          autoconf 
+          fontforge-nox 
+          python3-fontforge 
+          make
+          patch
+          
+      - name: "Install python dependencies using pip"
+        run: "pip3 install afdko"
 
       - name: "Checkout Proton GE Custom"
         uses: "actions/checkout@v2.3.4"
@@ -28,9 +37,19 @@ jobs:
 
       - name: "Apply patches"
         run: "./patches/protonprep-nofshack.sh"
+      
+      - name: "Configure"
+        run: "./configure.sh --no-steam-runtime"
+      
+      - name: "Build fonts"
+        run: "make fonts"
 
       - name: "Cleanup"
-        run: "find . -xtype f -iname *.orig -delete"
+        run: |
+          find . -xtype f -iname *.orig -delete
+          find obj-fonts/ -xtype f -not -name "*.ttf" -not -name "*.otf" -delete
+          rm -rf fonts/
+          mv obj-fonts/ fonts/
 
       - name: "Create .tar.xz"
         run: "tar --exclude='.git' --exclude='.' --exclude='..' -cJvf proton-ge-custom-src.tar.xz * .*"
@@ -39,8 +58,7 @@ jobs:
         run: "sha256sum -b proton-ge-custom-src.tar.xz > SHA256SUMS"
 
       - name: "Create release"
-        id: "create_release"
-        uses: "actions/create-release@v1.1.4"
+        uses: "softprops/action-gh-release@v1"
         env:
           GITHUB_TOKEN: "${{ secrets.LCTRS_BOT_TOKEN }}"
         with:
@@ -48,23 +66,6 @@ jobs:
           prerelease: false
           release_name: "${{ env.PROTON_GE_RELEASE }}"
           tag_name: "${{ env.PROTON_GE_RELEASE }}"
-
-      - name: "Upload Tarball to release"
-        uses: "actions/upload-release-asset@v1.0.2"
-        env:
-          GITHUB_TOKEN: "${{ secrets.LCTRS_BOT_TOKEN }}"
-        with:
-          upload_url: "${{ steps.create_release.outputs.upload_url }}"
-          asset_path: "./proton-ge-custom-src.tar.xz"
-          asset_name: "proton-ge-custom-src.tar.xz"
-          asset_content_type: "application/x-xz"
-
-      - name: "Upload SHA256SUMS file to release"
-        uses: "actions/upload-release-asset@v1.0.2"
-        env:
-          GITHUB_TOKEN: "${{ secrets.LCTRS_BOT_TOKEN }}"
-        with:
-          upload_url: "${{ steps.create_release.outputs.upload_url }}"
-          asset_path: "./SHA256SUMS"
-          asset_name: "SHA256SUMS"
-          asset_content_type: "text/plain"
+          files: |
+             proton-ge-custom-src.tar.xz
+             SHA256SUMS
