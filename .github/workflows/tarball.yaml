@@ -18,17 +18,8 @@ jobs:
       - name: "Install required system packages using apt-fast"
         run: >-
           DEBIAN_FRONTEND=noninteractive apt-fast install --no-install-recommends -y 
-          autoconf 
-          fontforge-nox 
-          python3-fontforge 
-          make
+          autoconf
           patch
-          
-      - name: "Install python dependencies using pip"
-        run: "pip3 install afdko"
-      
-      - name: "Prepend /home/runner/.local/bin to $PATH"
-        run: "echo '/home/runner/.local/bin' >> $GITHUB_PATH"
 
       - name: "Checkout Proton GE Custom"
         uses: "actions/checkout@v2.3.4"
@@ -40,19 +31,9 @@ jobs:
 
       - name: "Apply patches"
         run: "./patches/protonprep-nofshack.sh"
-      
-      - name: "Configure"
-        run: "./configure.sh --no-steam-runtime"
-      
-      - name: "Build fonts"
-        run: "make fonts"
 
       - name: "Cleanup"
-        run: |
-          find . -xtype f -iname *.orig -delete
-          find obj-fonts/ -xtype f -not -name "*.ttf" -not -name "*.otf" -delete
-          rm -rf fonts/
-          mv obj-fonts/ fonts/
+        run: "find . -xtype f -iname *.orig -delete"
 
       - name: "Create .tar.xz"
         run: "tar --exclude='.git' --exclude='.' --exclude='..' -cJvf proton-ge-custom-src.tar.xz * .*"
