@@ -31,7 +31,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Apply patches"
-        run: "./patches/protonprep-nofshack.sh"
+        run: "./patches/protonprep.sh"
 
       - name: "Store vdk3d-proton's build hash"
         run: "git describe --always --exclude=* --abbrev=15 --dirty=0 > BUILD"
