@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  PROTON_GE_RELEASE: "6.9-GE-2"
+  PROTON_GE_RELEASE: "6.10-GE-1"
   RELEASE: "1"
 
 jobs:
