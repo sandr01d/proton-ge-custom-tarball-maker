@@ -9,7 +9,7 @@ on:
 
 env:
   PROTON_GE_RELEASE: "6.10-GE-1"
-  RELEASE: "1"
+  RELEASE: "2"
 
 jobs:
   build:
@@ -40,6 +40,9 @@ jobs:
       - name: "Store vdk3d-proton's version"
         run: "git describe --always --tags --dirty=+ > VERSION"
         working-directory: "vkd3d-proton"
+        
+      - name: "Store dxvk-nvapi's version"
+        run: "git submodule status -- dxvk-nvapi > dxvk-nvapi/VERSION"
 
       - name: "Store proton's date"
         run: "git show -s --format=%cs > DATE"
