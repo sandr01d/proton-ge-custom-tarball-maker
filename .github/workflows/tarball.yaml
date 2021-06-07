@@ -9,7 +9,7 @@ on:
 
 env:
   PROTON_GE_RELEASE: "6.10-GE-1"
-  RELEASE: "2"
+  RELEASE: "3"
 
 jobs:
   build:
@@ -49,6 +49,13 @@ jobs:
 
       - name: "Store proton's version"
         run: "git describe --tags > VERSION"
+
+      - name: "Determine vulkan wine version"
+        run: "echo \"VK_XML_VERSION=$(awk -v FS='VK_XML_VERSION = ' 'NF>1{print $2}' dlls/winevulkan/make_vulkan)\" >> $GITHUB_ENV"
+        working-directory: "wine"
+        
+      - name: "Download vk.xml"
+        run: "curl -LsSO https://raw.githubusercontent.com/KhronosGroup/Vulkan-Docs/v${{ env.VK_XML_VERSION }}/xml/vk.xml"
 
       - name: "Cleanup"
         run: "find . -xtype f -iname *.orig -delete"
