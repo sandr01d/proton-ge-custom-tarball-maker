@@ -9,7 +9,7 @@ on:
 
 env:
   PROTON_GE_RELEASE: "6.10-GE-1"
-  RELEASE: "3"
+  RELEASE: "4"
 
 jobs:
   build:
@@ -56,6 +56,7 @@ jobs:
         
       - name: "Download vk.xml"
         run: "curl -LsSO https://raw.githubusercontent.com/KhronosGroup/Vulkan-Docs/v${{ env.VK_XML_VERSION }}/xml/vk.xml"
+        working-directory: "wine"
 
       - name: "Cleanup"
         run: "find . -xtype f -iname *.orig -delete"
