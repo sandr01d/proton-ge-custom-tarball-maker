@@ -4,21 +4,23 @@ on:
   push:
     branches:
       - "main"
+    paths:
+      - ".github/workflows/tarball.yaml"
 
   workflow_dispatch:
 
 env:
   PROTON_GE_RELEASE: "6.15-GE-1"
-  RELEASE: "1"
+  RELEASE: "2"
 
 jobs:
   build:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
 
     steps:
       - name: "Install required system packages using apt-fast"
         run: >-
-          DEBIAN_FRONTEND=noninteractive apt-fast install --no-install-recommends -y 
+          DEBIAN_FRONTEND=noninteractive apt-fast install --no-install-recommends -y
           autoconf
           patch
 
@@ -40,7 +42,7 @@ jobs:
       - name: "Store vdk3d-proton's version"
         run: "git describe --always --tags --dirty=+ > VERSION"
         working-directory: "vkd3d-proton"
-        
+
       - name: "Store dxvk-nvapi's version"
         run: "git submodule status -- dxvk-nvapi > dxvk-nvapi/VERSION"
 
@@ -53,7 +55,7 @@ jobs:
       - name: "Determine vulkan wine version"
         run: "echo \"VK_XML_VERSION=$(awk -v FS='VK_XML_VERSION = ' 'NF>1{print $2}' dlls/winevulkan/make_vulkan)\" >> $GITHUB_ENV"
         working-directory: "wine"
-        
+
       - name: "Download vk.xml"
         run: "curl -LsSO https://raw.githubusercontent.com/KhronosGroup/Vulkan-Docs/v${{ env.VK_XML_VERSION }}/xml/vk.xml"
         working-directory: "wine"

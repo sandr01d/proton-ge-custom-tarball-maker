@@ -1,0 +1,41 @@
+name: "Auto Update"
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2.3.4"
+        with:
+          token: "${{ secrets.LCTRS_BOT_TOKEN }}"
+
+      - name: "Fetch latest version of GloriousEggroll/proton-ge-custom"
+        run: >-
+          echo "LATEST_VERSION=$(
+            curl -Ls https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest |
+            jq -r ".tag_name"
+          )" >> $GITHUB_ENV
+
+      - name: "Update tarball.yaml with latest version using yq"
+        uses: "mikefarah/yq@v4.11.2"
+        with:
+          cmd: "yq eval -i '.env.PROTON_GE_RELEASE = \"${{ env.LATEST_VERSION }}\"' .github/workflows/tarball.yaml"
+
+      - name: "Set release number in tarball.yaml to 1 using yq"
+        uses: "mikefarah/yq@v4.11.2"
+        with:
+          cmd: "yq eval -i '.env.RELEASE = \"1\"' .github/workflows/tarball.yaml"
+
+      - name: "Commit modified files"
+        uses: "stefanzweifel/git-auto-commit-action@v4.11.0"
+        with:
+          commit_author: "lctrs-bot <bot@prmntr.me>"
+          commit_message: "proton: update to ${{ env.LATEST_VERSION }}"
+          commit_user_email: "bot@prmntr.me"
+          commit_user_name: "lctrs-bot"
