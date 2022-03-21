@@ -33,7 +33,7 @@ jobs:
           cmd: "yq eval -i '.env.RELEASE = \"1\"' .github/workflows/tarball.yaml"
 
       - name: "Commit modified files"
-        uses: "stefanzweifel/git-auto-commit-action@v4.13.1"
+        uses: "stefanzweifel/git-auto-commit-action@v4.14.0"
         with:
           commit_author: "lctrs-bot <bot@prmntr.me>"
           commit_message: "proton: update to ${{ env.LATEST_VERSION }}"
