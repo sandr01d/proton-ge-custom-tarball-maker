@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 env:
   PROTON_GE_RELEASE: "GE-Proton7-10"
-  RELEASE: "2"
+  RELEASE: "1"
 jobs:
   build:
     runs-on: "ubuntu-latest"
