@@ -23,12 +23,12 @@ jobs:
           )" >> $GITHUB_ENV
 
       - name: "Update tarball.yaml with latest version using yq"
-        uses: "mikefarah/yq@v4.27.3"
+        uses: "mikefarah/yq@v4.27.5"
         with:
           cmd: "yq eval -i '.env.PROTON_GE_RELEASE = \"${{ env.LATEST_VERSION }}\"' .github/workflows/tarball.yaml"
 
       - name: "Set release number in tarball.yaml to 1 using yq"
-        uses: "mikefarah/yq@v4.27.3"
+        uses: "mikefarah/yq@v4.27.5"
         with:
           cmd: "yq eval -i '.env.RELEASE = \"1\"' .github/workflows/tarball.yaml"
 
