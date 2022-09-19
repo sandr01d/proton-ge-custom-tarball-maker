@@ -7,7 +7,7 @@ on:
       - ".github/workflows/tarball.yaml"
   workflow_dispatch:
 env:
-  PROTON_GE_RELEASE: "GE-Proton7-33"
+  PROTON_GE_RELEASE: "GE-Proton7-35"
   RELEASE: "1"
 jobs:
   build:
