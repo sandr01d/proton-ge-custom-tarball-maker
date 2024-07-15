@@ -13,7 +13,7 @@ jobs:
       - name: "Checkout"
         uses: "actions/checkout@v4"
         with:
-          token: "${{ secrets.LCTRS_BOT_TOKEN }}"
+          token: "${{ secrets.PROTON_GE_TAR_MAKER_COMMIT_TOKEN }}"
 
       - name: "Fetch latest version of GloriousEggroll/proton-ge-custom"
         run: >-
@@ -35,7 +35,7 @@ jobs:
       - name: "Commit modified files"
         uses: "stefanzweifel/git-auto-commit-action@v5.0.0"
         with:
-          commit_author: "lctrs-bot <bot@prmntr.me>"
-          commit_message: "proton: update to ${{ env.LATEST_VERSION }}"
-          commit_user_email: "bot@prmntr.me"
-          commit_user_name: "lctrs-bot"
+          commit_author: "autocommit[bot] <autocommit[bot]@norealmail.net>"
+          commit_message: "Proton: Update to ${{ env.LATEST_VERSION }}"
+          commit_user_email: "autocommit[bot]@norealmail.net>"
+          commit_user_name: "autocommit[bot]"

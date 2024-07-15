@@ -45,8 +45,6 @@ jobs:
         run: "sha256sum -b proton-ge-custom-src.tar.xz > SHA256SUMS"
       - name: "Create release"
         uses: "softprops/action-gh-release@v1"
-        env:
-          GITHUB_TOKEN: "${{ secrets.LCTRS_BOT_TOKEN }}"
         with:
           draft: false
           prerelease: false
